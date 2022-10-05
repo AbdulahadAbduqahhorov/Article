@@ -1,0 +1,203 @@
+definitions:
+  models.Article:
+    properties:
+      author:
+        $ref: '#/definitions/models.Person'
+      body:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.CreateArticleModel:
+    properties:
+      author:
+        $ref: '#/definitions/models.Person'
+      body:
+        type: string
+      title:
+        type: string
+    type: object
+  models.JSONErrorResult:
+    properties:
+      error:
+        type: string
+    type: object
+  models.JSONResult:
+    properties:
+      data: {}
+      message:
+        type: string
+    type: object
+  models.Person:
+    properties:
+      firstname:
+        type: string
+      lastname:
+        type: string
+    type: object
+  models.UpdateArticleModel:
+    properties:
+      author:
+        $ref: '#/definitions/models.Person'
+      body:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+info:
+  contact:
+    email: example@swagger.io
+    name: API Article
+    url: http://example.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /v1/article:
+    get:
+      consumes:
+      - application/json
+      description: get article
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Article'
+                  type: array
+              type: object
+      summary: List Article
+      tags:
+      - articles
+    post:
+      consumes:
+      - application/json
+      description: create article
+      parameters:
+      - description: article body
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateArticleModel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Article'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Create article
+      tags:
+      - articles
+    put:
+      consumes:
+      - application/json
+      description: update article
+      parameters:
+      - description: article body
+        in: body
+        name: article
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateArticleModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Article'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Update article
+      tags:
+      - articles
+  /v1/article/{id}:
+    delete:
+      description: delete an article
+      parameters:
+      - description: article id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Article'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Delete article
+      tags:
+      - articles
+    get:
+      consumes:
+      - application/json
+      description: get an article by id
+      parameters:
+      - description: article id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Article'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Get article by id
+      tags:
+      - articles
+swagger: "2.0"
