@@ -23,8 +23,6 @@ func CreateArticle(article models.CreateArticleModel) models.Article {
 	return response
 }
 
-
-
 func GetArticle() (articles []models.Article) {
 	for _, article := range InMemoryArticle {
 		if article.DeletedAt == nil {
@@ -34,12 +32,22 @@ func GetArticle() (articles []models.Article) {
 	return
 }
 
-func GetArticleById(id string) (models.Article, error) {
-	var article models.Article
+func GetArticleById(id string) (models.GetArticleByIdModel, error) {
+	var article models.GetArticleByIdModel
 
 	for _, v := range InMemoryArticle {
 		if v.Id == id && v.DeletedAt == nil {
-			return v, nil
+			author, err := GetAuthorById(v.AuthorId)
+			if err != nil {
+				return article, fmt.Errorf("author not found with id %s", v.AuthorId)
+			}
+			article.Id = v.Id
+			article.Content = v.Content
+			article.Author = author
+			article.CreatedAt = v.CreatedAt
+			article.UpdatedAt = v.UpdatedAt
+			article.DeletedAt = v.DeletedAt
+			return article, nil
 		}
 	}
 	return article, fmt.Errorf("article not found with id %s", id)
@@ -64,13 +72,15 @@ func UpdateArticle(article models.UpdateArticleModel) (models.Article, error) {
 	return response, fmt.Errorf("article not found with id %s", article.Id)
 }
 
-func DeleteArticle(id string) (models.Article, error) {
-	article, err := GetArticleById(id)
-	if err != nil {
-		return article, fmt.Errorf("article not found with id %s", id)
+func DeleteArticle(id string) error {
+	for i, v := range InMemoryArticle {
+		if v.Id == id && v.DeletedAt == nil {
+			t := time.Now()
+			InMemoryArticle[i].DeletedAt = &t
+			return nil
+		}
 	}
-	t := time.Now()
-	article.DeletedAt = &t
-	return article, nil
+
+	return fmt.Errorf("article not found with id %s", id)
 
 }

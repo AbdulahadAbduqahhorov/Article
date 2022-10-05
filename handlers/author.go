@@ -130,7 +130,7 @@ func DeleteAuthor(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Author Deleted",
 		Data:    res,

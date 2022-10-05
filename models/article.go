@@ -26,3 +26,12 @@ type UpdateArticleModel struct {
 	Content
 	AuthorId string `json:"author_id"`
 }
+
+type GetArticleByIdModel struct {
+	Id string `json:"id"`
+	Content
+	Author    Author     `json:"author"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at"`
+}

@@ -122,7 +122,7 @@ func UpdateArticle(c *gin.Context) {
 // @Router      /v1/article/{id} [delete]
 func DeleteArticle(c *gin.Context) {
 	id := c.Param("id")
-	res, err := storage.DeleteArticle(id)
+	err := storage.DeleteArticle(id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
@@ -132,6 +132,5 @@ func DeleteArticle(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Article Deleted",
-		Data:    res,
 	})
 }
