@@ -5,22 +5,25 @@ import (
 	"time"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
-	"github.com/google/uuid"
 )
 
 var InMemoryArticle []models.Article
 
-func CreateArticle(article models.CreateArticleModel) models.Article {
+func CreateArticle(id string, article models.CreateArticleModel) error {
 	var response models.Article
+	_, err := GetAuthorById(article.AuthorId)
+	if err != nil {
+		return err
+	}
 	t := time.Now()
 	response.CreatedAt = &t
-	id := uuid.New()
-	response.Id = id.String()
-
+	response.Id = id
 	response.Content = article.Content
 	response.AuthorId = article.AuthorId
 	InMemoryArticle = append(InMemoryArticle, response)
-	return response
+
+	return nil
+
 }
 
 func GetArticle() (articles []models.Article) {
@@ -39,7 +42,7 @@ func GetArticleById(id string) (models.GetArticleByIdModel, error) {
 		if v.Id == id && v.DeletedAt == nil {
 			author, err := GetAuthorById(v.AuthorId)
 			if err != nil {
-				return article, fmt.Errorf("author not found with id %s", v.AuthorId)
+				return article, err
 			}
 			article.Id = v.Id
 			article.Content = v.Content
@@ -53,23 +56,20 @@ func GetArticleById(id string) (models.GetArticleByIdModel, error) {
 	return article, fmt.Errorf("article not found with id %s", id)
 }
 
-func UpdateArticle(article models.UpdateArticleModel) (models.Article, error) {
+func UpdateArticle(article models.UpdateArticleModel) (error) {
 
-	var response models.Article
-	for i := range InMemoryArticle {
+	
+	for i,v := range InMemoryArticle {
 		if InMemoryArticle[i].Id == article.Id && InMemoryArticle[i].DeletedAt == nil {
 			t := time.Now()
-			response.UpdatedAt = &t
-			response.CreatedAt = InMemoryArticle[i].CreatedAt
-			response.Content = article.Content
-			response.AuthorId = article.AuthorId
-			response.Id = article.Id
-			InMemoryArticle[i] = response
+			v.UpdatedAt = &t
+			v.Content = article.Content
+			InMemoryArticle[i] = v
 
-			return response, nil
+			return  nil
 		}
 	}
-	return response, fmt.Errorf("article not found with id %s", article.Id)
+	return fmt.Errorf("article not found with id %s", article.Id)
 }
 
 func DeleteArticle(id string) error {

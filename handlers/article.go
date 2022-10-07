@@ -6,6 +6,7 @@ import (
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
 	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 // CreateArticle godoc
@@ -17,6 +18,7 @@ import (
 // @Param       article body     models.CreateArticleModel true "article body"
 // @Success     201     {object} models.JSONResult{data=models.Article}
 // @Failure     400     {object} models.JSONErrorResult
+// @Failure     404     {object} models.JSONErrorResult
 // @Router      /v1/article [post]
 func CreateArticle(c *gin.Context) {
 	var article models.CreateArticleModel
@@ -27,11 +29,27 @@ func CreateArticle(c *gin.Context) {
 		})
 		return
 	}
-	response := storage.CreateArticle(article)
+	id := uuid.New().String()
+	err := storage.CreateArticle(id, article)
+	if err != nil {
+		c.JSON(http.StatusNotFound, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	 _,err = storage.GetArticleById(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+		return
+	}
+	
 
 	c.JSON(http.StatusCreated, models.JSONResult{
 		Message: "Article created",
-		Data:    response,
+		Data:    id,
 	})
 }
 
@@ -97,16 +115,25 @@ func UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	res, err := storage.UpdateArticle(article)
+	err := storage.UpdateArticle(article)
 	if err != nil {
-		c.JSON(http.StatusNotFound, models.JSONErrorResult{
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	res,err := storage.GetArticleById(article.Id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
 			Error: err.Error(),
 		})
 		return
 	}
 	c.JSON(http.StatusOK, models.JSONResult{
-		Message: "Article | Update",
-		Data:    res,
+		Message: "Article has been  Updated",
+		Data:res,
+		
 	})
 
 }

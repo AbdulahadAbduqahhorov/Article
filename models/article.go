@@ -24,7 +24,6 @@ type CreateArticleModel struct {
 type UpdateArticleModel struct {
 	Id string `json:"id"`
 	Content
-	AuthorId string `json:"author_id"`
 }
 
 type GetArticleByIdModel struct {

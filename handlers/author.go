@@ -122,7 +122,6 @@ func UpdateAuthor(c *gin.Context) {
 // @Router      /v1/author/{id} [delete]
 func DeleteAuthor(c *gin.Context) {
 	id := c.Param("id")
-
 	res, err := storage.DeleteAuthor(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{

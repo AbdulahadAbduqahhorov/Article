@@ -1,11 +1,13 @@
 definitions:
   models.Article:
     properties:
-      author:
-        $ref: '#/definitions/models.Person'
+      author_id:
+        type: string
       body:
         type: string
       created_at:
+        type: string
+      deleted_at:
         type: string
       id:
         type: string
@@ -14,13 +16,35 @@ definitions:
       updated_at:
         type: string
     type: object
+  models.Author:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: string
+      lastname:
+        type: string
+      updated_at:
+        type: string
+    type: object
   models.CreateArticleModel:
     properties:
-      author:
-        $ref: '#/definitions/models.Person'
+      author_id:
+        type: string
       body:
         type: string
       title:
+        type: string
+    type: object
+  models.CreateAuthorModel:
+    properties:
+      firstname:
+        type: string
+      lastname:
         type: string
     type: object
   models.JSONErrorResult:
@@ -34,22 +58,24 @@ definitions:
       message:
         type: string
     type: object
-  models.Person:
-    properties:
-      firstname:
-        type: string
-      lastname:
-        type: string
-    type: object
   models.UpdateArticleModel:
     properties:
-      author:
-        $ref: '#/definitions/models.Person'
+      author_id:
+        type: string
       body:
         type: string
       id:
         type: string
       title:
+        type: string
+    type: object
+  models.UpdateAuthorModel:
+    properties:
+      firstname:
+        type: string
+      id:
+        type: string
+      lastname:
         type: string
     type: object
 info:
@@ -108,6 +134,10 @@ paths:
               type: object
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Create article
@@ -200,4 +230,143 @@ paths:
       summary: Get article by id
       tags:
       - articles
+  /v1/author:
+    get:
+      consumes:
+      - application/json
+      description: get author
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/models.Author'
+                  type: array
+              type: object
+      summary: List Author
+      tags:
+      - authors
+    post:
+      consumes:
+      - application/json
+      description: create author
+      parameters:
+      - description: author body
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateAuthorModel'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Author'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Create author
+      tags:
+      - authors
+    put:
+      consumes:
+      - application/json
+      description: update author
+      parameters:
+      - description: author body
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateAuthorModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Author'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Update author
+      tags:
+      - authors
+  /v1/author/{id}:
+    delete:
+      description: delete an author
+      parameters:
+      - description: author id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Author'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Delete author
+      tags:
+      - authors
+    get:
+      consumes:
+      - application/json
+      description: get an author by id
+      parameters:
+      - description: author id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONResult'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.Author'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+      summary: Get author by id
+      tags:
+      - authors
 swagger: "2.0"
