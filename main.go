@@ -7,6 +7,7 @@ import (
 
 	docs "github.com/AbdulahadAbduqahhorov/gin/Article/docs"
 	"github.com/AbdulahadAbduqahhorov/gin/Article/handlers"
+	"github.com/AbdulahadAbduqahhorov/gin/Article/storage/inmemory"
 )
 
 // @contact.name  API Article
@@ -20,7 +21,11 @@ func main() {
 	docs.SwaggerInfo.Title = "Swagger Example API"
 	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
 	docs.SwaggerInfo.Version = "1.0"
-	h := handlers.Handler{}
+	h := handlers.Handler{
+		Im: inmemory.InMemory{
+			Db: &inmemory.DB{},
+		},
+	}
 	v1 := r.Group("v1")
 	{
 		v1.GET("/article", h.GetArticle)

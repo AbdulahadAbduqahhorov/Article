@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-var InMemoryAuthor []models.Author
+
 
 func (im InMemory) CreateAuthor(author models.CreateAuthorModel) models.Author {
 	var response models.Author
@@ -19,12 +19,12 @@ func (im InMemory) CreateAuthor(author models.CreateAuthorModel) models.Author {
 
 	response.FirstName = author.FirstName
 	response.LastName = author.LastName
-	InMemoryAuthor = append(InMemoryAuthor, response)
+	im.Db.InMemoryAuthor = append(im.Db.InMemoryAuthor, response)
 	return response
 }
 
 func (im InMemory) GetAuthor() (authors []models.Author) {
-	for _, author := range InMemoryAuthor {
+	for _, author := range im.Db.InMemoryAuthor {
 		if author.DeletedAt == nil {
 			authors = append(authors, author)
 		}
@@ -35,7 +35,7 @@ func (im InMemory) GetAuthor() (authors []models.Author) {
 func (im InMemory) GetAuthorById(id string) (models.Author, error) {
 	var author models.Author
 
-	for _, v := range InMemoryAuthor {
+	for _, v := range im.Db.InMemoryAuthor {
 		if v.Id == id && v.DeletedAt == nil {
 			return v, nil
 		}
@@ -46,15 +46,15 @@ func (im InMemory) GetAuthorById(id string) (models.Author, error) {
 func (im InMemory) UpdateAuthor(author models.UpdateAuthorModel) (models.Author, error) {
 
 	var response models.Author
-	for i := range InMemoryAuthor {
-		if InMemoryAuthor[i].Id == author.Id && InMemoryAuthor[i].DeletedAt == nil {
+	for i := range im.Db.InMemoryAuthor {
+		if im.Db.InMemoryAuthor[i].Id == author.Id && im.Db.InMemoryAuthor[i].DeletedAt == nil {
 			t := time.Now()
 			response.UpdatedAt = &t
-			response.CreatedAt = InMemoryAuthor[i].CreatedAt
+			response.CreatedAt = im.Db.InMemoryAuthor[i].CreatedAt
 			response.FirstName = author.FirstName
 			response.LastName = author.LastName
 			response.Id = author.Id
-			InMemoryAuthor[i] = response
+			im.Db.InMemoryAuthor[i] = response
 
 			return response, nil
 		}

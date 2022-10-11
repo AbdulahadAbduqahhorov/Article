@@ -7,7 +7,7 @@ import (
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
 )
 
-var InMemoryArticle []models.Article
+
 
 func (im InMemory) CreateArticle(id string, article models.CreateArticleModel) error {
 	var response models.Article
@@ -20,14 +20,14 @@ func (im InMemory) CreateArticle(id string, article models.CreateArticleModel) e
 	response.Id = id
 	response.Content = article.Content
 	response.AuthorId = article.AuthorId
-	InMemoryArticle = append(InMemoryArticle, response)
+	im.Db.InMemoryArticle = append(im.Db.InMemoryArticle, response)
 
 	return nil
 
 }
 
 func (im InMemory) GetArticle() (articles []models.Article) {
-	for _, article := range InMemoryArticle {
+	for _, article := range im.Db.InMemoryArticle {
 		if article.DeletedAt == nil {
 			articles = append(articles, article)
 		}
@@ -38,7 +38,7 @@ func (im InMemory) GetArticle() (articles []models.Article) {
 func (im InMemory) GetArticleById(id string) (models.GetArticleByIdModel, error) {
 	var article models.GetArticleByIdModel
 
-	for _, v := range InMemoryArticle {
+	for _, v := range im.Db.InMemoryArticle {
 		if v.Id == id && v.DeletedAt == nil {
 			author, err := im.GetAuthorById(v.AuthorId)
 			if err != nil {
@@ -58,12 +58,12 @@ func (im InMemory) GetArticleById(id string) (models.GetArticleByIdModel, error)
 
 func (im InMemory) UpdateArticle(article models.UpdateArticleModel) error {
 
-	for i, v := range InMemoryArticle {
-		if InMemoryArticle[i].Id == article.Id && InMemoryArticle[i].DeletedAt == nil {
+	for i, v := range im.Db.InMemoryArticle {
+		if im.Db.InMemoryArticle[i].Id == article.Id && im.Db.InMemoryArticle[i].DeletedAt == nil {
 			t := time.Now()
 			v.UpdatedAt = &t
 			v.Content = article.Content
-			InMemoryArticle[i] = v
+			im.Db.InMemoryArticle[i] = v
 
 			return nil
 		}
@@ -72,10 +72,10 @@ func (im InMemory) UpdateArticle(article models.UpdateArticleModel) error {
 }
 
 func (im InMemory) DeleteArticle(id string) error {
-	for i, v := range InMemoryArticle {
+	for i, v := range im.Db.InMemoryArticle {
 		if v.Id == id && v.DeletedAt == nil {
 			t := time.Now()
-			InMemoryArticle[i].DeletedAt = &t
+			im.Db.InMemoryArticle[i].DeletedAt = &t
 			return nil
 		}
 	}
