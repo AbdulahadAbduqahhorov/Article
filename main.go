@@ -20,20 +20,20 @@ func main() {
 	docs.SwaggerInfo.Title = "Swagger Example API"
 	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
 	docs.SwaggerInfo.Version = "1.0"
-
+	h := handlers.Handler{}
 	v1 := r.Group("v1")
 	{
-		v1.GET("/article", handlers.GetArticle)
-		v1.POST("/article", handlers.CreateArticle)
-		v1.PUT("/article", handlers.UpdateArticle)
-		v1.DELETE("/article/:id", handlers.DeleteArticle)
-		v1.GET("/article/:id", handlers.GetArticleById)
+		v1.GET("/article", h.GetArticle)
+		v1.POST("/article", h.CreateArticle)
+		v1.PUT("/article", h.UpdateArticle)
+		v1.DELETE("/article/:id", h.DeleteArticle)
+		v1.GET("/article/:id", h.GetArticleById)
 
-		v1.GET("/author", handlers.GetAuthor)
-		v1.POST("/author", handlers.CreateAuthor)
-		v1.PUT("/author", handlers.UpdateAuthor)
-		v1.DELETE("/author/:id", handlers.DeleteAuthor)
-		v1.GET("/author/:id", handlers.GetAuthorById)
+		v1.GET("/author", h.GetAuthor)
+		v1.POST("/author", h.CreateAuthor)
+		v1.PUT("/author", h.UpdateAuthor)
+		v1.DELETE("/author/:id", h.DeleteAuthor)
+		v1.GET("/author/:id", h.GetAuthorById)
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

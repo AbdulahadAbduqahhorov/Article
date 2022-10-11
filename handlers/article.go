@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -20,7 +19,8 @@ import (
 // @Failure     400     {object} models.JSONErrorResult
 // @Failure     404     {object} models.JSONErrorResult
 // @Router      /v1/article [post]
-func CreateArticle(c *gin.Context) {
+func (h Handler) CreateArticle(c *gin.Context) {
+
 	var article models.CreateArticleModel
 
 	if err := c.ShouldBindJSON(&article); err != nil {
@@ -30,7 +30,7 @@ func CreateArticle(c *gin.Context) {
 		return
 	}
 	id := uuid.New().String()
-	err := storage.CreateArticle(id, article)
+	err := h.Im.CreateArticle(id, article)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -38,14 +38,13 @@ func CreateArticle(c *gin.Context) {
 		return
 	}
 
-	 _,err = storage.GetArticleById(id)
+	_, err = h.Im.GetArticleById(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
 			Error: err.Error(),
 		})
 		return
 	}
-	
 
 	c.JSON(http.StatusCreated, models.JSONResult{
 		Message: "Article created",
@@ -61,10 +60,11 @@ func CreateArticle(c *gin.Context) {
 // @Produce     json
 // @Success     200 {object} models.JSONResult{data=[]models.Article}
 // @Router      /v1/article [get]
-func GetArticle(c *gin.Context) {
+func (h Handler) GetArticle(c *gin.Context) {
+
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Article | GetList",
-		Data:    storage.GetArticle(),
+		Data:    h.Im.GetArticle(),
 	})
 }
 
@@ -78,10 +78,10 @@ func GetArticle(c *gin.Context) {
 // @Success     200 {object} models.JSONResult{data=models.Article}
 // @Failure     400 {object} models.JSONErrorResult
 // @Router      /v1/article/{id} [get]
-func GetArticleById(c *gin.Context) {
+func (h Handler) GetArticleById(c *gin.Context) {
 	id := c.Param("id")
 
-	res, err := storage.GetArticleById(id)
+	res, err := h.Im.GetArticleById(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -105,7 +105,7 @@ func GetArticleById(c *gin.Context) {
 // @Success     200     {object} models.JSONResult{data=models.Article}
 // @Failure     400     {object} models.JSONErrorResult
 // @Router      /v1/article [put]
-func UpdateArticle(c *gin.Context) {
+func (h Handler) UpdateArticle(c *gin.Context) {
 	var article models.UpdateArticleModel
 
 	if err := c.ShouldBindJSON(&article); err != nil {
@@ -115,7 +115,7 @@ func UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	err := storage.UpdateArticle(article)
+	err := h.Im.UpdateArticle(article)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
@@ -123,7 +123,7 @@ func UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	res,err := storage.GetArticleById(article.Id)
+	res, err := h.Im.GetArticleById(article.Id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
 			Error: err.Error(),
@@ -132,8 +132,7 @@ func UpdateArticle(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Article has been  Updated",
-		Data:res,
-		
+		Data:    res,
 	})
 
 }
@@ -147,9 +146,10 @@ func UpdateArticle(c *gin.Context) {
 // @Success     200 {object} models.JSONResult{data=models.Article}
 // @Failure     400 {object} models.JSONErrorResult
 // @Router      /v1/article/{id} [delete]
-func DeleteArticle(c *gin.Context) {
+func (h Handler) DeleteArticle(c *gin.Context) {
+
 	id := c.Param("id")
-	err := storage.DeleteArticle(id)
+	err := h.Im.DeleteArticle(id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{

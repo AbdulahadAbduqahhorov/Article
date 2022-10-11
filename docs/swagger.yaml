@@ -60,8 +60,6 @@ definitions:
     type: object
   models.UpdateArticleModel:
     properties:
-      author_id:
-        type: string
       body:
         type: string
       id:

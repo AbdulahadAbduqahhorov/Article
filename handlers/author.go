@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +18,7 @@ import (
 // @Success     201     {object} models.JSONResult{data=models.Author}
 // @Failure     400     {object} models.JSONErrorResult
 // @Router      /v1/author [post]
-func CreateAuthor(c *gin.Context) {
+func (h Handler) CreateAuthor(c *gin.Context) {
 	var author models.CreateAuthorModel
 
 	if err := c.ShouldBindJSON(&author); err != nil {
@@ -27,7 +27,8 @@ func CreateAuthor(c *gin.Context) {
 		})
 		return
 	}
-	response := storage.CreateAuthor(author)
+
+	response := h.Im.CreateAuthor(author)
 
 	c.JSON(http.StatusCreated, models.JSONResult{
 		Message: "Author created",
@@ -43,10 +44,11 @@ func CreateAuthor(c *gin.Context) {
 // @Produce     json
 // @Success     200 {object} models.JSONResult{data=[]models.Author}
 // @Router      /v1/author [get]
-func GetAuthor(c *gin.Context) {
+func (h Handler) GetAuthor(c *gin.Context) {
+
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Author | GetList",
-		Data:    storage.GetAuthor(),
+		Data:    h.Im.GetAuthor(),
 	})
 }
 
@@ -60,10 +62,10 @@ func GetAuthor(c *gin.Context) {
 // @Success     200 {object} models.JSONResult{data=models.Author}
 // @Failure     400 {object} models.JSONErrorResult
 // @Router      /v1/author/{id} [get]
-func GetAuthorById(c *gin.Context) {
+func (h Handler) GetAuthorById(c *gin.Context) {
 	id := c.Param("id")
 
-	res, err := storage.GetAuthorById(id)
+	res, err := h.Im.GetAuthorById(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -87,7 +89,7 @@ func GetAuthorById(c *gin.Context) {
 // @Success     200     {object} models.JSONResult{data=models.Author}
 // @Failure     400     {object} models.JSONErrorResult
 // @Router      /v1/author [put]
-func UpdateAuthor(c *gin.Context) {
+func (h Handler) UpdateAuthor(c *gin.Context) {
 	var author models.UpdateAuthorModel
 
 	if err := c.ShouldBindJSON(&author); err != nil {
@@ -97,7 +99,7 @@ func UpdateAuthor(c *gin.Context) {
 		return
 	}
 
-	res, err := storage.UpdateAuthor(author)
+	res, err := h.Im.UpdateAuthor(author)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -120,9 +122,10 @@ func UpdateAuthor(c *gin.Context) {
 // @Success     200 {object} models.JSONResult{data=models.Author}
 // @Failure     400 {object} models.JSONErrorResult
 // @Router      /v1/author/{id} [delete]
-func DeleteAuthor(c *gin.Context) {
+func (h Handler) DeleteAuthor(c *gin.Context) {
+
 	id := c.Param("id")
-	res, err := storage.DeleteAuthor(id)
+	res, err := h.Im.DeleteAuthor(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),

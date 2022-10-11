@@ -592,9 +592,6 @@ const docTemplate = `{
         "models.UpdateArticleModel": {
             "type": "object",
             "properties": {
-                "author_id": {
-                    "type": "string"
-                },
                 "body": {
                     "type": "string"
                 },
