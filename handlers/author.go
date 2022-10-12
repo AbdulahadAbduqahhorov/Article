@@ -28,7 +28,7 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 		return
 	}
 
-	response := h.Im.CreateAuthor(author)
+	response := h.Stg.CreateAuthor(author)
 
 	c.JSON(http.StatusCreated, models.JSONResult{
 		Message: "Author created",
@@ -48,7 +48,7 @@ func (h Handler) GetAuthor(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Author | GetList",
-		Data:    h.Im.GetAuthor(),
+		Data:    h.Stg.GetAuthor(),
 	})
 }
 
@@ -65,7 +65,7 @@ func (h Handler) GetAuthor(c *gin.Context) {
 func (h Handler) GetAuthorById(c *gin.Context) {
 	id := c.Param("id")
 
-	res, err := h.Im.GetAuthorById(id)
+	res, err := h.Stg.GetAuthorById(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -99,7 +99,7 @@ func (h Handler) UpdateAuthor(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Im.UpdateAuthor(author)
+	res, err := h.Stg.UpdateAuthor(author)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -125,7 +125,7 @@ func (h Handler) UpdateAuthor(c *gin.Context) {
 func (h Handler) DeleteAuthor(c *gin.Context) {
 
 	id := c.Param("id")
-	res, err := h.Im.DeleteAuthor(id)
+	res, err := h.Stg.DeleteAuthor(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),

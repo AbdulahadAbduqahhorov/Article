@@ -1,7 +1,7 @@
 package handlers
 
-import "github.com/AbdulahadAbduqahhorov/gin/Article/storage/inmemory"
+import "github.com/AbdulahadAbduqahhorov/gin/Article/storage"
 
 type Handler struct{
-	Im inmemory.InMemory
+	Stg storage.StorageI
 }

@@ -7,6 +7,7 @@ import (
 
 	docs "github.com/AbdulahadAbduqahhorov/gin/Article/docs"
 	"github.com/AbdulahadAbduqahhorov/gin/Article/handlers"
+	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
 	"github.com/AbdulahadAbduqahhorov/gin/Article/storage/inmemory"
 )
 
@@ -16,15 +17,16 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
-
+	var stg storage.StorageI
+	stg=inmemory.InMemory{
+		Db: &inmemory.DB{},
+	}
 	r := gin.Default()
 	docs.SwaggerInfo.Title = "Swagger Example API"
 	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
 	docs.SwaggerInfo.Version = "1.0"
 	h := handlers.Handler{
-		Im: inmemory.InMemory{
-			Db: &inmemory.DB{},
-		},
+		Stg:stg ,
 	}
 	v1 := r.Group("v1")
 	{

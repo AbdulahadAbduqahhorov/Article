@@ -30,7 +30,7 @@ func (h Handler) CreateArticle(c *gin.Context) {
 		return
 	}
 	id := uuid.New().String()
-	err := h.Im.CreateArticle(id, article)
+	err := h.Stg.CreateArticle(id, article)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -38,7 +38,7 @@ func (h Handler) CreateArticle(c *gin.Context) {
 		return
 	}
 
-	_, err = h.Im.GetArticleById(id)
+	_, err = h.Stg.GetArticleById(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
 			Error: err.Error(),
@@ -64,7 +64,7 @@ func (h Handler) GetArticle(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Article | GetList",
-		Data:    h.Im.GetArticle(),
+		Data:    h.Stg.GetArticle(),
 	})
 }
 
@@ -81,7 +81,7 @@ func (h Handler) GetArticle(c *gin.Context) {
 func (h Handler) GetArticleById(c *gin.Context) {
 	id := c.Param("id")
 
-	res, err := h.Im.GetArticleById(id)
+	res, err := h.Stg.GetArticleById(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -115,7 +115,7 @@ func (h Handler) UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	err := h.Im.UpdateArticle(article)
+	err := h.Stg.UpdateArticle(article)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
@@ -123,7 +123,7 @@ func (h Handler) UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Im.GetArticleById(article.Id)
+	res, err := h.Stg.GetArticleById(article.Id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
 			Error: err.Error(),
@@ -149,7 +149,7 @@ func (h Handler) UpdateArticle(c *gin.Context) {
 func (h Handler) DeleteArticle(c *gin.Context) {
 
 	id := c.Param("id")
-	err := h.Im.DeleteArticle(id)
+	err := h.Stg.DeleteArticle(id)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
