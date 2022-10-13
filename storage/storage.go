@@ -9,7 +9,7 @@ type StorageI interface {
 	UpdateArticle(article models.UpdateArticleModel) error
 	DeleteArticle(id string) error
 
-	CreateAuthor(author models.CreateAuthorModel) models.Author
+	CreateAuthor(id string,author models.CreateAuthorModel) error
 	GetAuthor() (authors []models.Author)
 	GetAuthorById(id string) (models.Author, error)
 	UpdateAuthor(author models.UpdateAuthorModel) (models.Author, error)

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
+	"github.com/google/uuid"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,6 +18,7 @@ import (
 // @Param       author body     models.CreateAuthorModel true "author body"
 // @Success     201     {object} models.JSONResult{data=models.Author}
 // @Failure     400     {object} models.JSONErrorResult
+// @Failure     500     {object} models.JSONErrorResult
 // @Router      /v1/author [post]
 func (h Handler) CreateAuthor(c *gin.Context) {
 	var author models.CreateAuthorModel
@@ -27,12 +29,25 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 		})
 		return
 	}
+	id := uuid.New().String()
+	err := h.Stg.CreateAuthor(id,author)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: err.Error(),
+		})	
+		return
+	}
+	_,err=h.Stg.GetAuthorById(id)
 
-	response := h.Stg.CreateAuthor(author)
-
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
+			Error: err.Error(),
+		})	
+		return
+	}
 	c.JSON(http.StatusCreated, models.JSONResult{
 		Message: "Author created",
-		Data:    response,
+		Data:    id,
 	})
 }
 
