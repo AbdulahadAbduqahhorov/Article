@@ -1,26 +1,22 @@
 package inmemory
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
-	"github.com/google/uuid"
 )
 
-
-
-func (im InMemory) CreateAuthor(author models.CreateAuthorModel) models.Author {
+func (im InMemory) CreateAuthor(id string, author models.CreateAuthorModel) error {
 	var response models.Author
 	t := time.Now()
 	response.CreatedAt = &t
-	id := uuid.New()
-	response.Id = id.String()
-
+	response.Id = id
 	response.FirstName = author.FirstName
 	response.LastName = author.LastName
 	im.Db.InMemoryAuthor = append(im.Db.InMemoryAuthor, response)
-	return response
+	return nil
 }
 
 func (im InMemory) GetAuthor() (authors []models.Author) {
@@ -40,7 +36,7 @@ func (im InMemory) GetAuthorById(id string) (models.Author, error) {
 			return v, nil
 		}
 	}
-	return author, fmt.Errorf("author not found with id %s", id)
+	return author, errors.New("author not found")
 }
 
 func (im InMemory) UpdateAuthor(author models.UpdateAuthorModel) (models.Author, error) {
