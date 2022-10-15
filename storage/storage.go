@@ -12,6 +12,6 @@ type StorageI interface {
 	CreateAuthor(id string,author models.CreateAuthorModel) error
 	GetAuthor() (authors []models.Author)
 	GetAuthorById(id string) (models.Author, error)
-	UpdateAuthor(author models.UpdateAuthorModel) (models.Author, error)
-	DeleteAuthor(id string) (models.Author, error) 
+	UpdateAuthor(author models.UpdateAuthorModel) (error)
+	DeleteAuthor(id string) (error) 
 }

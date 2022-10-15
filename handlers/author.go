@@ -46,7 +46,7 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, models.JSONResult{
-		Message: "Author created",
+		Message: "Author has been created",
 		Data:    id,
 	})
 }
@@ -62,7 +62,7 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 func (h Handler) GetAuthor(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.JSONResult{
-		Message: "Author | GetList",
+		Message: "Author List",
 		Data:    h.Stg.GetAuthor(),
 	})
 }
@@ -75,7 +75,7 @@ func (h Handler) GetAuthor(c *gin.Context) {
 // @Produce     json
 // @Param       id  path     string true "author id"
 // @Success     200 {object} models.JSONResult{data=models.Author}
-// @Failure     400 {object} models.JSONErrorResult
+// @Failure     404 {object} models.JSONErrorResult
 // @Router      /v1/author/{id} [get]
 func (h Handler) GetAuthorById(c *gin.Context) {
 	id := c.Param("id")
@@ -89,7 +89,7 @@ func (h Handler) GetAuthorById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, models.JSONResult{
-		Message: "Author | GetById",
+		Message: "OK",
 		Data:    res,
 	})
 }
@@ -114,16 +114,24 @@ func (h Handler) UpdateAuthor(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Stg.UpdateAuthor(author)
+	err := h.Stg.UpdateAuthor(author)
 	if err != nil {
-		c.JSON(http.StatusNotFound, models.JSONErrorResult{
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+		return
+	}
+
+	res, err := h.Stg.GetAuthorById(author.Id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
 			Error: err.Error(),
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, models.JSONResult{
-		Message: "Author | Update",
+		Message: "Author has been updated",
 		Data:    res,
 	})
 }
@@ -135,12 +143,12 @@ func (h Handler) UpdateAuthor(c *gin.Context) {
 // @Produce     json
 // @Param       id  path     string true "author id"
 // @Success     200 {object} models.JSONResult{data=models.Author}
-// @Failure     400 {object} models.JSONErrorResult
+// @Failure     404 {object} models.JSONErrorResult
 // @Router      /v1/author/{id} [delete]
 func (h Handler) DeleteAuthor(c *gin.Context) {
 
 	id := c.Param("id")
-	res, err := h.Stg.DeleteAuthor(id)
+	err := h.Stg.DeleteAuthor(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -149,7 +157,7 @@ func (h Handler) DeleteAuthor(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, models.JSONResult{
-		Message: "Author Deleted",
-		Data:    res,
+		Message: "Author has been Deleted",
+		
 	})
 }

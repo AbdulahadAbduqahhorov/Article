@@ -2,7 +2,6 @@ package inmemory
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
@@ -39,7 +38,7 @@ func (im InMemory) GetAuthorById(id string) (models.Author, error) {
 	return author, errors.New("author not found")
 }
 
-func (im InMemory) UpdateAuthor(author models.UpdateAuthorModel) (models.Author, error) {
+func (im InMemory) UpdateAuthor(author models.UpdateAuthorModel) error {
 
 	var response models.Author
 	for i := range im.Db.InMemoryAuthor {
@@ -52,19 +51,22 @@ func (im InMemory) UpdateAuthor(author models.UpdateAuthorModel) (models.Author,
 			response.Id = author.Id
 			im.Db.InMemoryAuthor[i] = response
 
-			return response, nil
+			return nil
 		}
 	}
-	return response, fmt.Errorf("author not found with id %s", author.Id)
+	return errors.New("author not found with")
 }
 
-func (im InMemory) DeleteAuthor(id string) (models.Author, error) {
-	author, err := im.GetAuthorById(id)
-	if err != nil {
-		return author, fmt.Errorf("author not found with id %s", id)
+func (im InMemory) DeleteAuthor(id string) error {
+
+	for i, v := range im.Db.InMemoryArticle {
+		if v.Id == id && v.DeletedAt == nil {
+			t := time.Now()
+			im.Db.InMemoryArticle[i].DeletedAt = &t
+			return nil
+		}
 	}
-	t := time.Now()
-	author.DeletedAt = &t
-	return author, nil
+
+	return errors.New("article not found")
 
 }

@@ -17,7 +17,6 @@ import (
 // @Param       article body     models.CreateArticleModel true "article body"
 // @Success     201     {object} models.JSONResult{data=models.Article}
 // @Failure     400     {object} models.JSONErrorResult
-// @Failure     404     {object} models.JSONErrorResult
 // @Router      /v1/article [post]
 func (h Handler) CreateArticle(c *gin.Context) {
 
@@ -32,7 +31,7 @@ func (h Handler) CreateArticle(c *gin.Context) {
 	id := uuid.New().String()
 	err := h.Stg.CreateArticle(id, article)
 	if err != nil {
-		c.JSON(http.StatusNotFound, models.JSONErrorResult{
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
 		})
 		return
@@ -47,7 +46,7 @@ func (h Handler) CreateArticle(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, models.JSONResult{
-		Message: "Article created",
+		Message: "Article has been created",
 		Data:    id,
 	})
 }
@@ -63,7 +62,7 @@ func (h Handler) CreateArticle(c *gin.Context) {
 func (h Handler) GetArticle(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.JSONResult{
-		Message: "Article | GetList",
+		Message: "Article List",
 		Data:    h.Stg.GetArticle(),
 	})
 }
@@ -76,7 +75,7 @@ func (h Handler) GetArticle(c *gin.Context) {
 // @Produce     json
 // @Param       id  path     string true "article id"
 // @Success     200 {object} models.JSONResult{data=models.Article}
-// @Failure     400 {object} models.JSONErrorResult
+// @Failure     404 {object} models.JSONErrorResult
 // @Router      /v1/article/{id} [get]
 func (h Handler) GetArticleById(c *gin.Context) {
 	id := c.Param("id")
@@ -90,7 +89,7 @@ func (h Handler) GetArticleById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, models.JSONResult{
-		Message: "Article | GetById",
+		Message: "OK",
 		Data:    res,
 	})
 }
@@ -144,7 +143,7 @@ func (h Handler) UpdateArticle(c *gin.Context) {
 // @Produce     json
 // @Param       id  path     string true "article id"
 // @Success     200 {object} models.JSONResult{data=models.Article}
-// @Failure     400 {object} models.JSONErrorResult
+// @Failure     404 {object} models.JSONErrorResult
 // @Router      /v1/article/{id} [delete]
 func (h Handler) DeleteArticle(c *gin.Context) {
 
@@ -158,6 +157,6 @@ func (h Handler) DeleteArticle(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, models.JSONResult{
-		Message: "Article Deleted",
+		Message: "Article has been Deleted",
 	})
 }

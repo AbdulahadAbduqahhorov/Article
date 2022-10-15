@@ -1,13 +1,12 @@
 package inmemory
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
 )
-
-
 
 func (im InMemory) CreateArticle(id string, article models.CreateArticleModel) error {
 	var response models.Article
@@ -53,7 +52,7 @@ func (im InMemory) GetArticleById(id string) (models.GetArticleByIdModel, error)
 			return article, nil
 		}
 	}
-	return article, fmt.Errorf("article not found with id %s", id)
+	return article, errors.New("article not found")
 }
 
 func (im InMemory) UpdateArticle(article models.UpdateArticleModel) error {
@@ -68,7 +67,7 @@ func (im InMemory) UpdateArticle(article models.UpdateArticleModel) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("article not found with id %s", article.Id)
+	return errors.New("article not found")
 }
 
 func (im InMemory) DeleteArticle(id string) error {
