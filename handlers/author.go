@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
 	"github.com/google/uuid"
@@ -16,9 +17,9 @@ import (
 // @Accept      json
 // @Produce     json
 // @Param       author body     models.CreateAuthorModel true "author body"
-// @Success     201     {object} models.JSONResult{data=models.Author}
-// @Failure     400     {object} models.JSONErrorResult
-// @Failure     500     {object} models.JSONErrorResult
+// @Success     201    {object} models.JSONResult{data=models.Author}
+// @Failure     400    {object} models.JSONErrorResult
+// @Failure     500    {object} models.JSONErrorResult
 // @Router      /v1/author [post]
 func (h Handler) CreateAuthor(c *gin.Context) {
 	var author models.CreateAuthorModel
@@ -30,19 +31,19 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 		return
 	}
 	id := uuid.New().String()
-	err := h.Stg.CreateAuthor(id,author)
+	err := h.Stg.CreateAuthor(id, author)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
-		})	
+		})
 		return
 	}
-	_,err=h.Stg.GetAuthorById(id)
+	_, err = h.Stg.GetAuthorById(id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
 			Error: err.Error(),
-		})	
+		})
 		return
 	}
 	c.JSON(http.StatusCreated, models.JSONResult{
@@ -57,13 +58,33 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 // @Tags        authors
 // @Accept      json
 // @Produce     json
+// @Param       limit  query    int    false "10"
+// @Param       offset query    int    false "0"
+// @Param       search query    string false "string default"
 // @Success     200 {object} models.JSONResult{data=[]models.Author}
 // @Router      /v1/author [get]
 func (h Handler) GetAuthor(c *gin.Context) {
+	limitStr := c.Query("limit")
+	offsetStr := c.Query("offset")
+	search := c.Query("search")
 
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+	}
+
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+	}
+	res := h.Stg.GetAuthor(limit, offset, search)
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Author List",
-		Data:    h.Stg.GetAuthor(),
+		Data:    res,
 	})
 }
 
@@ -101,8 +122,8 @@ func (h Handler) GetAuthorById(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       author body     models.UpdateAuthorModel true "author body"
-// @Success     200     {object} models.JSONResult{data=models.Author}
-// @Failure     400     {object} models.JSONErrorResult
+// @Success     200    {object} models.JSONResult{data=models.Author}
+// @Failure     400    {object} models.JSONErrorResult
 // @Router      /v1/author [put]
 func (h Handler) UpdateAuthor(c *gin.Context) {
 	var author models.UpdateAuthorModel
@@ -158,6 +179,5 @@ func (h Handler) DeleteAuthor(c *gin.Context) {
 
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Author has been Deleted",
-		
 	})
 }

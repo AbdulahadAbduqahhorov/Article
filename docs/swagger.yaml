@@ -90,6 +90,19 @@ paths:
       consumes:
       - application/json
       description: get article
+      parameters:
+      - description: "10"
+        in: query
+        name: limit
+        type: integer
+      - description: "0"
+        in: query
+        name: offset
+        type: integer
+      - description: string default
+        in: query
+        name: search
+        type: string
       produces:
       - application/json
       responses:
@@ -132,10 +145,6 @@ paths:
               type: object
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/models.JSONErrorResult'
-        "404":
-          description: Not Found
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Create article
@@ -192,8 +201,8 @@ paths:
                 data:
                   $ref: '#/definitions/models.Article'
               type: object
-        "400":
-          description: Bad Request
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Delete article
@@ -221,8 +230,8 @@ paths:
                 data:
                   $ref: '#/definitions/models.Article'
               type: object
-        "400":
-          description: Bad Request
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Get article by id
@@ -275,6 +284,10 @@ paths:
               type: object
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Create author
@@ -331,8 +344,8 @@ paths:
                 data:
                   $ref: '#/definitions/models.Author'
               type: object
-        "400":
-          description: Bad Request
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Delete author
@@ -360,8 +373,8 @@ paths:
                 data:
                   $ref: '#/definitions/models.Author'
               type: object
-        "400":
-          description: Bad Request
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Get author by id

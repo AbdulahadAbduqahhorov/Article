@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
@@ -18,10 +19,19 @@ func (im InMemory) CreateAuthor(id string, author models.CreateAuthorModel) erro
 	return nil
 }
 
-func (im InMemory) GetAuthor() (authors []models.Author) {
+func (im InMemory) GetAuthor(limit, offset int, search string) (authors []models.Author) {
+
+	count := 0
+
 	for _, author := range im.Db.InMemoryAuthor {
-		if author.DeletedAt == nil {
-			authors = append(authors, author)
+		if author.DeletedAt == nil && (strings.Contains(author.FirstName, search) || strings.Contains(author.LastName, search)) {
+			if count < offset {
+				count++
+			} else if limit > 0 {
+				authors = append(authors, author)
+				limit--
+
+			}
 		}
 	}
 	return

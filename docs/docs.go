@@ -37,6 +37,26 @@ const docTemplate = `{
                     "articles"
                 ],
                 "summary": "List Article",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "0",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "string default",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -158,12 +178,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.JSONErrorResult"
-                        }
                     }
                 }
             }
@@ -209,8 +223,8 @@ const docTemplate = `{
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -254,8 +268,8 @@ const docTemplate = `{
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -397,6 +411,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONErrorResult"
+                        }
                     }
                 }
             }
@@ -442,8 +462,8 @@ const docTemplate = `{
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -487,8 +507,8 @@ const docTemplate = `{
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }

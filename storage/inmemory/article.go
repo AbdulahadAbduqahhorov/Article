@@ -2,7 +2,7 @@ package inmemory
 
 import (
 	"errors"
-	"fmt"
+	"strings"
 	"time"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
@@ -25,10 +25,18 @@ func (im InMemory) CreateArticle(id string, article models.CreateArticleModel) e
 
 }
 
-func (im InMemory) GetArticle() (articles []models.Article) {
+func (im InMemory) GetArticle(limit, offset int, search string) (articles []models.Article) {
+	count:=0
+
 	for _, article := range im.Db.InMemoryArticle {
-		if article.DeletedAt == nil {
-			articles = append(articles, article)
+		if article.DeletedAt == nil && (strings.Contains(article.Title, search) || strings.Contains(article.Body, search)) {
+			if count < offset {
+				count++
+			}else if limit>0{
+				articles = append(articles, article)
+				limit--
+				
+			}
 		}
 	}
 	return
@@ -79,6 +87,6 @@ func (im InMemory) DeleteArticle(id string) error {
 		}
 	}
 
-	return fmt.Errorf("article not found with id %s", id)
+	return errors.New("article not found")
 
 }

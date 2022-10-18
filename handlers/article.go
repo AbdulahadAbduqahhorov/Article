@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
 	"github.com/gin-gonic/gin"
@@ -57,13 +58,33 @@ func (h Handler) CreateArticle(c *gin.Context) {
 // @Tags        articles
 // @Accept      json
 // @Produce     json
-// @Success     200 {object} models.JSONResult{data=[]models.Article}
+// @Param       limit  query    int    false "10"
+// @Param       offset query    int    false "0"
+// @Param       search query    string false "string default"
+// @Success     200    {object} models.JSONResult{data=[]models.Article}
 // @Router      /v1/article [get]
 func (h Handler) GetArticle(c *gin.Context) {
+	limitStr := c.DefaultQuery("limit", "10")
+	offsetStr := c.DefaultQuery("offset", "0")
+	search := c.Query("search")
 
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+	}
+
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+	}
+	res := h.Stg.GetArticle(limit, offset, search)
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Article List",
-		Data:    h.Stg.GetArticle(),
+		Data:    res,
 	})
 }
 

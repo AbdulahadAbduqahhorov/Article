@@ -25,6 +25,26 @@
                     "articles"
                 ],
                 "summary": "List Article",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "10",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "0",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "string default",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -146,12 +166,6 @@
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.JSONErrorResult"
-                        }
                     }
                 }
             }
@@ -197,8 +211,8 @@
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -242,8 +256,8 @@
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -385,6 +399,12 @@
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONErrorResult"
+                        }
                     }
                 }
             }
@@ -430,8 +450,8 @@
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -475,8 +495,8 @@
                             ]
                         }
                     },
-                    "400": {
-                        "description": "Bad Request",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
