@@ -15,7 +15,7 @@ func (im InMemory) CreateArticle(id string, article models.CreateArticleModel) e
 		return err
 	}
 	t := time.Now()
-	response.CreatedAt = &t
+	response.CreatedAt = t
 	response.Id = id
 	response.Content = article.Content
 	response.AuthorId = article.AuthorId

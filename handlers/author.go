@@ -73,6 +73,7 @@ func (h Handler) GetAuthor(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
 		})
+		return
 	}
 
 	offset, err := strconv.Atoi(offsetStr)
@@ -80,8 +81,16 @@ func (h Handler) GetAuthor(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
 		})
+		return
 	}
-	res := h.Stg.GetAuthor(limit, offset, search)
+	res,err := h.Stg.GetAuthor(limit, offset, search)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Author List",
 		Data:    res,
@@ -181,3 +190,4 @@ func (h Handler) DeleteAuthor(c *gin.Context) {
 		Message: "Author has been Deleted",
 	})
 }
+

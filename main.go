@@ -1,17 +1,14 @@
 package main
 
 import (
-	"strconv"
-
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	docs "github.com/AbdulahadAbduqahhorov/gin/Article/docs"
 	"github.com/AbdulahadAbduqahhorov/gin/Article/handlers"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
 	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
-	"github.com/AbdulahadAbduqahhorov/gin/Article/storage/inmemory"
+	"github.com/AbdulahadAbduqahhorov/gin/Article/storage/postgres"
 )
 
 // @contact.name  API Article
@@ -20,79 +17,17 @@ import (
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
-	var stg storage.StorageI
-	stg = inmemory.InMemory{
-		Db: &inmemory.DB{},
-	}
 	r := gin.Default()
 	docs.SwaggerInfo.Title = "Swagger Example API"
 	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
 	docs.SwaggerInfo.Version = "1.0"
-	id := "7e2415ed-dd8f-40cd-a2a2-d16e253f1065"
-	err:=stg.CreateAuthor(id, models.CreateAuthorModel{
-		FirstName: "John",
-		LastName:  "Doe",
-	})
-	if err != nil{
-		panic(err)
-	}
-	idArticle := "f137fd5d-f8bf-46da-ad92-ac66dfadd634"
-	for i := 1; i <= 14; i++ {
-		title := strconv.Itoa(i)
-		err := stg.CreateArticle(idArticle, models.CreateArticleModel{
-			Content: models.Content{
-				Title: title,
-				Body:  "Smth",
-			},
-			AuthorId: id,
-		})
-		if err != nil {
-			panic(err)
-		}
-	}
-	err = stg.CreateArticle(idArticle, models.CreateArticleModel{
-		Content: models.Content{
-			Title: "15",
-			Body:  "News",
-		},
-		AuthorId: id,
-	})
-	if err != nil {
-		panic(err)
-	}
-	err = stg.CreateArticle(idArticle, models.CreateArticleModel{
-		Content: models.Content{
-			Title: "16",
-			Body:  "News",
-		},
-		AuthorId: id,
-	})
-	if err != nil {
-		panic(err)
-	}
-	err = stg.CreateArticle(idArticle, models.CreateArticleModel{
-		Content: models.Content{
-			Title: "17",
-			Body:  "News",
-		},
-		AuthorId: id,
-	})
-	if err != nil {
-		panic(err)
-	}
 
-	err = stg.CreateArticle(idArticle, models.CreateArticleModel{
-		Content: models.Content{
-			Title: "18",
-			Body:  "Sport",
-		},
-		AuthorId: id,
-	})
+	var stg storage.StorageI
+	var err error
+	stg, err = postgres.InitDb("user=abdulahad password=10082018 dbname=uacademy sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
-	
-
 	h := handlers.Handler{
 		Stg: stg,
 	}

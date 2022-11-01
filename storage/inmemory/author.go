@@ -10,8 +10,7 @@ import (
 
 func (im InMemory) CreateAuthor(id string, author models.CreateAuthorModel) error {
 	var response models.Author
-	t := time.Now()
-	response.CreatedAt = &t
+	response.CreatedAt = time.Now()
 	response.Id = id
 	response.FirstName = author.FirstName
 	response.LastName = author.LastName

@@ -62,6 +62,7 @@ func (h Handler) CreateArticle(c *gin.Context) {
 // @Param       offset query    int    false "0"
 // @Param       search query    string false "string default"
 // @Success     200    {object} models.JSONResult{data=[]models.Article}
+// @Failure     400     {object} models.JSONErrorResult
 // @Router      /v1/article [get]
 func (h Handler) GetArticle(c *gin.Context) {
 	limitStr := c.DefaultQuery("limit", "10")
@@ -73,6 +74,7 @@ func (h Handler) GetArticle(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
 		})
+		return
 	}
 
 	offset, err := strconv.Atoi(offsetStr)
@@ -80,8 +82,15 @@ func (h Handler) GetArticle(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
 		})
+		return
 	}
-	res := h.Stg.GetArticle(limit, offset, search)
+	res,err := h.Stg.GetArticle(limit, offset, search)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: err.Error(),
+		})
+		return
+	}
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Article List",
 		Data:    res,
