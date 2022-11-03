@@ -16,8 +16,9 @@ import (
 // @Accept      json
 // @Produce     json
 // @Param       article body     models.CreateArticleModel true "article body"
-// @Success     201     {object} models.JSONResult{data=models.Article}
-// @Failure     400     {object} models.JSONErrorResult
+// @Success     201     {object} models.JSONResult{data=string} "Success"
+// @Failure     400     {object} models.JSONErrorResult "Bad request"
+// @Failure     500     {object} models.JSONErrorResult "Server error"
 // @Router      /v1/article [post]
 func (h Handler) CreateArticle(c *gin.Context) {
 
@@ -61,8 +62,8 @@ func (h Handler) CreateArticle(c *gin.Context) {
 // @Param       limit  query    int    false "10"
 // @Param       offset query    int    false "0"
 // @Param       search query    string false "string default"
-// @Success     200    {object} models.JSONResult{data=[]models.Article}
-// @Failure     400     {object} models.JSONErrorResult
+// @Success     200    {object} models.JSONResult{data=[]models.Article} "Success"
+// @Failure     400     {object} models.JSONErrorResult "Bad request"
 // @Router      /v1/article [get]
 func (h Handler) GetArticle(c *gin.Context) {
 	limitStr := c.DefaultQuery("limit", "10")
@@ -104,15 +105,15 @@ func (h Handler) GetArticle(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       id  path     string true "article id"
-// @Success     200 {object} models.JSONResult{data=models.Article}
-// @Failure     404 {object} models.JSONErrorResult
+// @Success     200 {object} models.JSONResult{data=models.GetArticleByIdModel} "Success"
+// @Failure     400 {object} models.JSONErrorResult "Bad request"
 // @Router      /v1/article/{id} [get]
 func (h Handler) GetArticleById(c *gin.Context) {
 	id := c.Param("id")
-
+	
 	res, err := h.Stg.GetArticleById(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, models.JSONErrorResult{
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
 		})
 		return
@@ -131,8 +132,9 @@ func (h Handler) GetArticleById(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       article body     models.UpdateArticleModel true "article body"
-// @Success     200     {object} models.JSONResult{data=models.Article}
-// @Failure     400     {object} models.JSONErrorResult
+// @Success     200     {object} models.JSONResult{message=string} "Success"
+// @Failure     400     {object} models.JSONErrorResult "Bad request"
+// @Failure     500     {object} models.JSONErrorResult "Server error"
 // @Router      /v1/article [put]
 func (h Handler) UpdateArticle(c *gin.Context) {
 	var article models.UpdateArticleModel
@@ -152,7 +154,7 @@ func (h Handler) UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Stg.GetArticleById(article.Id)
+	_, err = h.Stg.GetArticleById(article.Id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
 			Error: err.Error(),
@@ -161,7 +163,6 @@ func (h Handler) UpdateArticle(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, models.JSONResult{
 		Message: "Article has been  Updated",
-		Data:    res,
 	})
 
 }
@@ -172,8 +173,8 @@ func (h Handler) UpdateArticle(c *gin.Context) {
 // @Tags        articles
 // @Produce     json
 // @Param       id  path     string true "article id"
-// @Success     200 {object} models.JSONResult{data=models.Article}
-// @Failure     404 {object} models.JSONErrorResult
+// @Success     200 {object} models.JSONResult{message=string} "Success"
+// @Failure     400 {object} models.JSONErrorResult "Bad Request"
 // @Router      /v1/article/{id} [delete]
 func (h Handler) DeleteArticle(c *gin.Context) {
 
@@ -181,7 +182,7 @@ func (h Handler) DeleteArticle(c *gin.Context) {
 	err := h.Stg.DeleteArticle(id)
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, models.JSONErrorResult{
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
 		})
 		return

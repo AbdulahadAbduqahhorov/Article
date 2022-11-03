@@ -12,17 +12,18 @@ func (stg Postgres) CreateArticle(id string, article models.CreateArticleModel) 
 	if err != nil {
 		return err
 	}
-	_, err = stg.db.Exec(`INSERT INTO 
-		article (
-			id,
-			title,
-			body,
-			author_id) 
-		VALUES (
-			$1, 
-			$2,
-			$3,
-			$4)`,
+	_, err = stg.db.Exec(`INSERT INTO article 
+	(
+		id,
+		title,
+		body,
+		author_id
+	) VALUES (
+		$1,
+		$2,
+		$3,
+		$4
+	)`,
 		id,
 		article.Title,
 		article.Body,
@@ -99,10 +100,7 @@ func (stg Postgres) GetArticleById(id string) (models.GetArticleByIdModel, error
 		au.created_at,
 		au.updated_at,
 		au.deleted_at
-	FROM article ar 
-	JOIN author au 
-	ON article.author_id=author.id 
-	WHERE ar.id=$1`, id).Scan(
+	FROM article ar JOIN author au ON ar.author_id=au.id WHERE ar.id=$1 `, id).Scan(
 		&article.Id,
 		&article.Title,
 		&article.Body,
@@ -129,7 +127,7 @@ func (stg Postgres) UpdateArticle(article models.UpdateArticleModel) error {
 		title=:t, 
 		body=:b,
 		updated_at=now() 
-		WHERE id=:i AND deleted_at IS NULL )`, map[string]interface{}{
+		WHERE id=:i AND deleted_at IS NULL 	`, map[string]interface{}{
 		"t": article.Title,
 		"b": article.Body,
 		"i": article.Id,
@@ -137,20 +135,28 @@ func (stg Postgres) UpdateArticle(article models.UpdateArticleModel) error {
 	if err != nil {
 		return err
 	}
-	if n, _ := res.RowsAffected(); n == 0 {
-		return errors.New("article not found")
+	n, err:= res.RowsAffected()
+	if err != nil{
+		return err
 	}
-	return nil
+	if n >0 {
+		return nil
+	}
+	return errors.New("article not found")
 }
 
 func (stg Postgres) DeleteArticle(id string) error {
-	res, err := stg.db.NamedExec(`UPDATE article SET deleted_at=now() WHERE id=$1 AND deleted_at IS NULL)`, id)
+	res, err := stg.db.Exec(`UPDATE article SET deleted_at=now() WHERE id=$1 AND deleted_at IS NULL`, id)
 	if err != nil {
 		return err
 	}
-	if n, _ := res.RowsAffected(); n == 0 {
-		return errors.New("article not found")
+	n, err:= res.RowsAffected()
+	if err != nil{
+		return err
 	}
-	return nil
+	if n >0 {
+		return nil
+	}
+	return errors.New("article not found")
 
 }

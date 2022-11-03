@@ -59,7 +59,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
                             "allOf": [
                                 {
@@ -80,7 +80,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -112,7 +112,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
                             "allOf": [
                                 {
@@ -121,8 +121,8 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.Article"
+                                        "message": {
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -130,7 +130,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONErrorResult"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -162,7 +168,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created",
+                        "description": "Success",
                         "schema": {
                             "allOf": [
                                 {
@@ -172,7 +178,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Article"
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -180,7 +186,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONErrorResult"
+                        }
+                    },
+                    "500": {
+                        "description": "Server error",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -212,7 +224,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
                             "allOf": [
                                 {
@@ -222,15 +234,15 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Article"
+                                            "$ref": "#/definitions/models.GetArticleByIdModel"
                                         }
                                     }
                                 }
                             ]
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "400": {
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -257,7 +269,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
                             "allOf": [
                                 {
@@ -266,16 +278,16 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.Article"
+                                        "message": {
+                                            "type": "string"
                                         }
                                     }
                                 }
                             ]
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -318,7 +330,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
                             "allOf": [
                                 {
@@ -336,6 +348,12 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/models.JSONErrorResult"
                         }
                     }
                 }
@@ -365,7 +383,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
                             "allOf": [
                                 {
@@ -383,7 +401,7 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -415,7 +433,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "201": {
-                        "description": "Created",
+                        "description": "Success",
                         "schema": {
                             "allOf": [
                                 {
@@ -425,7 +443,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/models.Author"
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -433,13 +451,31 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
                     },
+                    "422": {
+                        "description": "Validation Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/models.JSONErrorResult"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
                     "500": {
-                        "description": "Internal Server Error",
+                        "description": "Server error",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -471,7 +507,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
                             "allOf": [
                                 {
@@ -489,7 +525,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "Not Found",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -516,25 +552,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Success",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/models.JSONResult"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/models.Author"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/models.JSONResult"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "400": {
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/models.JSONErrorResult"
                         }
@@ -611,6 +635,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lastname": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.GetArticleByIdModel": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "$ref": "#/definitions/models.Author"
+                },
+                "body": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }

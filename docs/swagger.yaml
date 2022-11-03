@@ -45,6 +45,23 @@ definitions:
       lastname:
         type: string
     type: object
+  models.GetArticleByIdModel:
+    properties:
+      author:
+        $ref: '#/definitions/models.Author'
+      body:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
   models.JSONErrorResult:
     properties:
       error:
@@ -105,7 +122,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
           schema:
             allOf:
             - $ref: '#/definitions/models.JSONResult'
@@ -116,7 +133,7 @@ paths:
                   type: array
               type: object
         "400":
-          description: Bad Request
+          description: Bad request
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: List Article
@@ -137,16 +154,20 @@ paths:
       - application/json
       responses:
         "201":
-          description: Created
+          description: Success
           schema:
             allOf:
             - $ref: '#/definitions/models.JSONResult'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Article'
+                  type: string
               type: object
         "400":
-          description: Bad Request
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+        "500":
+          description: Server error
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Create article
@@ -167,16 +188,20 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
           schema:
             allOf:
             - $ref: '#/definitions/models.JSONResult'
             - properties:
-                data:
-                  $ref: '#/definitions/models.Article'
+                message:
+                  type: string
               type: object
         "400":
-          description: Bad Request
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
+        "500":
+          description: Server error
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Update article
@@ -195,16 +220,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
           schema:
             allOf:
             - $ref: '#/definitions/models.JSONResult'
             - properties:
-                data:
-                  $ref: '#/definitions/models.Article'
+                message:
+                  type: string
               type: object
-        "404":
-          description: Not Found
+        "400":
+          description: Bad Request
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Delete article
@@ -224,16 +249,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
           schema:
             allOf:
             - $ref: '#/definitions/models.JSONResult'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Article'
+                  $ref: '#/definitions/models.GetArticleByIdModel'
               type: object
-        "404":
-          description: Not Found
+        "400":
+          description: Bad request
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Get article by id
@@ -261,7 +286,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
           schema:
             allOf:
             - $ref: '#/definitions/models.JSONResult'
@@ -271,6 +296,10 @@ paths:
                     $ref: '#/definitions/models.Author'
                   type: array
               type: object
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/models.JSONErrorResult'
       summary: List Author
       tags:
       - authors
@@ -289,20 +318,29 @@ paths:
       - application/json
       responses:
         "201":
-          description: Created
+          description: Success
           schema:
             allOf:
             - $ref: '#/definitions/models.JSONResult'
             - properties:
                 data:
-                  $ref: '#/definitions/models.Author'
+                  type: string
               type: object
         "400":
-          description: Bad Request
+          description: Bad request
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
+        "422":
+          description: Validation Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/models.JSONErrorResult'
+            - properties:
+                error:
+                  type: string
+              type: object
         "500":
-          description: Internal Server Error
+          description: Server error
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Create author
@@ -323,7 +361,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
           schema:
             allOf:
             - $ref: '#/definitions/models.JSONResult'
@@ -332,7 +370,7 @@ paths:
                   $ref: '#/definitions/models.Author'
               type: object
         "400":
-          description: Bad Request
+          description: Bad request
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Update author
@@ -351,16 +389,11 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
           schema:
-            allOf:
-            - $ref: '#/definitions/models.JSONResult'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.Author'
-              type: object
-        "404":
-          description: Not Found
+            $ref: '#/definitions/models.JSONResult'
+        "400":
+          description: Bad request
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Delete author
@@ -380,7 +413,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Success
           schema:
             allOf:
             - $ref: '#/definitions/models.JSONResult'
@@ -389,7 +422,7 @@ paths:
                   $ref: '#/definitions/models.Author'
               type: object
         "404":
-          description: Not Found
+          description: Bad request
           schema:
             $ref: '#/definitions/models.JSONErrorResult'
       summary: Get author by id

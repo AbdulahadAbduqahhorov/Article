@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -17,9 +18,10 @@ import (
 // @Accept      json
 // @Produce     json
 // @Param       author body     models.CreateAuthorModel true "author body"
-// @Success     201    {object} models.JSONResult{data=models.Author}
-// @Failure     400    {object} models.JSONErrorResult
-// @Failure     500    {object} models.JSONErrorResult
+// @Success     201    {object} models.JSONResult{data=string} "Success"
+// @Failure     400    {object} models.JSONErrorResult "Bad request"
+// @Failure 	422    {object} models.JSONErrorResult{error=string} "Validation Error"
+// @Failure     500    {object} models.JSONErrorResult "Server error"
 // @Router      /v1/author [post]
 func (h Handler) CreateAuthor(c *gin.Context) {
 	var author models.CreateAuthorModel
@@ -27,6 +29,12 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 	if err := c.ShouldBindJSON(&author); err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
+		})
+		return
+	}
+	if author.FirstName == "" || author.LastName == "" {
+		c.JSON(422, models.JSONErrorResult{
+			Error: errors.New("validation error").Error(),
 		})
 		return
 	}
@@ -61,11 +69,12 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 // @Param       limit  query    int    false "10"
 // @Param       offset query    int    false "0"
 // @Param       search query    string false "string default"
-// @Success     200 {object} models.JSONResult{data=[]models.Author}
+// @Success     200 {object} models.JSONResult{data=[]models.Author} "Success"
+// @Failure     400    {object} models.JSONErrorResult "Bad request"
 // @Router      /v1/author [get]
 func (h Handler) GetAuthor(c *gin.Context) {
-	limitStr := c.Query("limit")
-	offsetStr := c.Query("offset")
+	limitStr := c.DefaultQuery("limit", "10")
+	offsetStr := c.DefaultQuery("offset", "0")
 	search := c.Query("search")
 
 	limit, err := strconv.Atoi(limitStr)
@@ -83,7 +92,7 @@ func (h Handler) GetAuthor(c *gin.Context) {
 		})
 		return
 	}
-	res,err := h.Stg.GetAuthor(limit, offset, search)
+	res, err := h.Stg.GetAuthor(limit, offset, search)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
@@ -104,8 +113,8 @@ func (h Handler) GetAuthor(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       id  path     string true "author id"
-// @Success     200 {object} models.JSONResult{data=models.Author}
-// @Failure     404 {object} models.JSONErrorResult
+// @Success     200 {object} models.JSONResult{data=models.Author} "Success"
+// @Failure     404 {object} models.JSONErrorResult "Bad request"
 // @Router      /v1/author/{id} [get]
 func (h Handler) GetAuthorById(c *gin.Context) {
 	id := c.Param("id")
@@ -131,8 +140,8 @@ func (h Handler) GetAuthorById(c *gin.Context) {
 // @Accept      json
 // @Produce     json
 // @Param       author body     models.UpdateAuthorModel true "author body"
-// @Success     200    {object} models.JSONResult{data=models.Author}
-// @Failure     400    {object} models.JSONErrorResult
+// @Success     200    {object} models.JSONResult{data=models.Author} "Success"
+// @Failure     400    {object} models.JSONErrorResult "Bad request"
 // @Router      /v1/author [put]
 func (h Handler) UpdateAuthor(c *gin.Context) {
 	var author models.UpdateAuthorModel
@@ -172,15 +181,15 @@ func (h Handler) UpdateAuthor(c *gin.Context) {
 // @Tags        authors
 // @Produce     json
 // @Param       id  path     string true "author id"
-// @Success     200 {object} models.JSONResult{data=models.Author}
-// @Failure     404 {object} models.JSONErrorResult
+// @Success     200 {object} models.JSONResult{} "Success"
+// @Failure     400 {object} models.JSONErrorResult "Bad request"
 // @Router      /v1/author/{id} [delete]
 func (h Handler) DeleteAuthor(c *gin.Context) {
 
 	id := c.Param("id")
 	err := h.Stg.DeleteAuthor(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, models.JSONErrorResult{
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
 		})
 		return
@@ -190,4 +199,3 @@ func (h Handler) DeleteAuthor(c *gin.Context) {
 		Message: "Author has been Deleted",
 	})
 }
-

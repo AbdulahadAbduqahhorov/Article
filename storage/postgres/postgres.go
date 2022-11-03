@@ -16,13 +16,14 @@ CREATE TABLE IF NOT EXISTS author (
 	lastname VARCHAR(255) NOT NULL ,
 	created_at TIMESTAMP DEFAULT now() NOT NULL,
 	updated_at TIMESTAMP,
-	deleted_at TIMESTAMP	
+	deleted_at TIMESTAMP
+	
 
 );
 
 CREATE TABLE IF NOT EXISTS article (
    	id CHAR(36) PRIMARY KEY,
-   	title VARCHAR(255) UNIQUE NOT NULL,
+   	title VARCHAR(255)  NOT NULL,
    	body TEXT NOT NULL,
    	author_id CHAR(36),
    	created_at TIMESTAMP DEFAULT now() NOT NULL,
@@ -31,7 +32,16 @@ CREATE TABLE IF NOT EXISTS article (
    	CONSTRAINT fk_author
    	FOREIGN KEY(author_id) 
    	REFERENCES author(id)
+	
 );
+
+ALTER TABLE article
+  DROP CONSTRAINT IF EXISTS u_title_deleted_at
+, ADD CONSTRAINT u_title_deleted_at UNIQUE NULLS NOT DISTINCT (title,deleted_at);
+
+ALTER TABLE author
+  DROP CONSTRAINT IF EXISTS u_firstname_lastname_deleted_at
+, ADD CONSTRAINT u_firstname_lastname_deleted_at UNIQUE NULLS NOT DISTINCT (firstname,lastname,deleted_at);
 
 `
 

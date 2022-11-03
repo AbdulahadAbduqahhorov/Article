@@ -87,14 +87,13 @@ func (stg Postgres) GetAuthorById(id string) (models.Author, error) {
 		updated_at,
 		deleted_at
 	FROM author  
-	WHERE id=$1`, id).Scan(
+	WHERE id=$1 AND deleted_at is NULL`, id).Scan(
 		&author.Id,
 		&author.FirstName,
 		&author.LastName,
 		&author.CreatedAt,
 		&author.UpdatedAt,
 		&author.DeletedAt,
-
 	)
 	if err != nil {
 		return author, err
@@ -108,7 +107,7 @@ func (stg Postgres) UpdateAuthor(author models.UpdateAuthorModel) error {
 		firstname=:f, 
 		lastname=:l,
 		updated_at=now() 
-		WHERE id=:i AND deleted_at IS NULL )`, map[string]interface{}{
+		WHERE id=:i AND deleted_at IS NULL `, map[string]interface{}{
 		"f": author.FirstName,
 		"l": author.LastName,
 		"i": author.Id,
@@ -116,15 +115,15 @@ func (stg Postgres) UpdateAuthor(author models.UpdateAuthorModel) error {
 	if err != nil {
 		return err
 	}
-	if n, _ := res.RowsAffected(); n == 0 {
-		return errors.New("author not found")
+	if n, _ := res.RowsAffected(); n > 0 {
+		return nil
 	}
-	return nil
+	return errors.New("author not found")
 }
 
 func (stg Postgres) DeleteAuthor(id string) error {
 
-	res, err := stg.db.NamedExec(`UPDATE author SET deleted_at=now() WHERE id=$1 AND deleted_at IS NULL)`, id)
+	res, err := stg.db.Exec(`UPDATE author SET deleted_at=now() WHERE id=$1 AND deleted_at IS NULL`, id)
 	if err != nil {
 		return err
 	}
