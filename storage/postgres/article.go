@@ -10,7 +10,7 @@ func (stg Postgres) CreateArticle(id string, article models.CreateArticleModel) 
 
 	_, err := stg.GetAuthorById(article.AuthorId)
 	if err != nil {
-		return err
+		return errors.New("author not found")
 	}
 	_, err = stg.db.Exec(`INSERT INTO article 
 	(
