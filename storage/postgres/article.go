@@ -4,11 +4,24 @@ import (
 	"errors"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
+	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
+	"github.com/jmoiron/sqlx"
 )
 
-func (stg Postgres) CreateArticle(id string, article models.CreateArticleModel) error {
+type articleRepo struct {
+	db *sqlx.DB
+}
+var author authorRepo
 
-	_, err := stg.GetAuthorById(article.AuthorId)
+func NewArticleRepo(db *sqlx.DB) storage.ArticleRepoI {
+	return articleRepo{
+		db:db,
+	}
+}
+
+func (stg articleRepo) CreateArticle(id string, article models.CreateArticleModel) error {
+
+	_, err := author.GetAuthorById(article.AuthorId)
 	if err != nil {
 		return errors.New("author not found")
 	}
@@ -36,7 +49,7 @@ func (stg Postgres) CreateArticle(id string, article models.CreateArticleModel) 
 
 }
 
-func (stg Postgres) GetArticle(limit, offset int, search string) ([]models.Article, error) {
+func (stg articleRepo) GetArticle(limit, offset int, search string) ([]models.Article, error) {
 	var res []models.Article
 
 	rows, err := stg.db.Queryx(`SELECT 
@@ -83,7 +96,7 @@ func (stg Postgres) GetArticle(limit, offset int, search string) ([]models.Artic
 
 }
 
-func (stg Postgres) GetArticleById(id string) (models.GetArticleByIdModel, error) {
+func (stg articleRepo) GetArticleById(id string) (models.GetArticleByIdModel, error) {
 	var article models.GetArticleByIdModel
 
 	err := stg.db.QueryRow(`
@@ -120,7 +133,7 @@ func (stg Postgres) GetArticleById(id string) (models.GetArticleByIdModel, error
 	return article, nil
 }
 
-func (stg Postgres) UpdateArticle(article models.UpdateArticleModel) error {
+func (stg articleRepo) UpdateArticle(article models.UpdateArticleModel) error {
 
 	res, err := stg.db.NamedExec(`
 	UPDATE  article SET 
@@ -135,26 +148,26 @@ func (stg Postgres) UpdateArticle(article models.UpdateArticleModel) error {
 	if err != nil {
 		return err
 	}
-	n, err:= res.RowsAffected()
-	if err != nil{
+	n, err := res.RowsAffected()
+	if err != nil {
 		return err
 	}
-	if n >0 {
+	if n > 0 {
 		return nil
 	}
 	return errors.New("article not found")
 }
 
-func (stg Postgres) DeleteArticle(id string) error {
+func (stg articleRepo) DeleteArticle(id string) error {
 	res, err := stg.db.Exec(`UPDATE article SET deleted_at=now() WHERE id=$1 AND deleted_at IS NULL`, id)
 	if err != nil {
 		return err
 	}
-	n, err:= res.RowsAffected()
-	if err != nil{
+	n, err := res.RowsAffected()
+	if err != nil {
 		return err
 	}
-	if n >0 {
+	if n > 0 {
 		return nil
 	}
 	return errors.New("article not found")

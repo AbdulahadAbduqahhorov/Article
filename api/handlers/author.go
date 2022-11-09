@@ -39,14 +39,14 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 		return
 	}
 	id := uuid.New().String()
-	err := h.Stg.CreateAuthor(id, author)
+	err := h.Stg.Author().CreateAuthor(id, author)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
 		})
 		return
 	}
-	_, err = h.Stg.GetAuthorById(id)
+	_, err = h.Stg.Author().GetAuthorById(id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
@@ -92,7 +92,7 @@ func (h Handler) GetAuthor(c *gin.Context) {
 		})
 		return
 	}
-	res, err := h.Stg.GetAuthor(limit, offset, search)
+	res, err := h.Stg.Author().GetAuthor(limit, offset, search)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
@@ -119,7 +119,7 @@ func (h Handler) GetAuthor(c *gin.Context) {
 func (h Handler) GetAuthorById(c *gin.Context) {
 	id := c.Param("id")
 
-	res, err := h.Stg.GetAuthorById(id)
+	res, err := h.Stg.Author().GetAuthorById(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, models.JSONErrorResult{
 			Error: err.Error(),
@@ -153,7 +153,7 @@ func (h Handler) UpdateAuthor(c *gin.Context) {
 		return
 	}
 
-	err := h.Stg.UpdateAuthor(author)
+	err := h.Stg.Author().UpdateAuthor(author)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
@@ -161,7 +161,7 @@ func (h Handler) UpdateAuthor(c *gin.Context) {
 		return
 	}
 
-	res, err := h.Stg.GetAuthorById(author.Id)
+	res, err := h.Stg.Author().GetAuthorById(author.Id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, models.JSONErrorResult{
 			Error: err.Error(),
@@ -187,7 +187,7 @@ func (h Handler) UpdateAuthor(c *gin.Context) {
 func (h Handler) DeleteAuthor(c *gin.Context) {
 
 	id := c.Param("id")
-	err := h.Stg.DeleteAuthor(id)
+	err := h.Stg.Author().DeleteAuthor(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),

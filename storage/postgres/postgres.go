@@ -1,12 +1,37 @@
 package postgres
 
 import (
+	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 type Postgres struct {
-	db *sqlx.DB
+	db      *sqlx.DB
+	article storage.ArticleRepoI
+	author  storage.AuthorRepoI
+}
+
+func NewPostgres(config string) (storage.StorageI,error) {
+	tempDb, err := sqlx.Connect("postgres", config)
+	if err != nil {
+		return nil, err
+	}
+	return &Postgres{db: tempDb}, nil
+}
+
+func (p *Postgres) Article() storage.ArticleRepoI {
+	if p.article == nil {
+		p.article = &articleRepo{db: p.db}
+	}
+	return p.article
+}
+
+func (p *Postgres) Author() storage.AuthorRepoI {
+	if p.author == nil {
+		p.author = &authorRepo{db: p.db}
+	}
+	return p.author
 }
 
 // var schema = `
@@ -17,7 +42,6 @@ type Postgres struct {
 // 	created_at TIMESTAMP DEFAULT now() NOT NULL,
 // 	updated_at TIMESTAMP,
 // 	deleted_at TIMESTAMP
-	
 
 // );
 
@@ -30,9 +54,9 @@ type Postgres struct {
 // 	updated_at TIMESTAMP,
 // 	deleted_at TIMESTAMP,
 //    	CONSTRAINT fk_author
-//    	FOREIGN KEY(author_id) 
+//    	FOREIGN KEY(author_id)
 //    	REFERENCES author(id)
-	
+
 // );
 
 // ALTER TABLE article
@@ -45,13 +69,7 @@ type Postgres struct {
 
 // `
 
-func InitDb(config string) (*Postgres, error) {
 
-	tempDb, err := sqlx.Connect("postgres", config)
-	if err != nil {
-		return nil, err
-	}
-	return &Postgres{db: tempDb}, nil
 	// tempDb.MustExec(schema)
 
 	// tx := tempDb.MustBegin()
@@ -74,5 +92,3 @@ func InitDb(config string) (*Postgres, error) {
 	// }
 
 
-
-}

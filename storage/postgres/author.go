@@ -4,9 +4,20 @@ import (
 	"errors"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
+	"github.com/AbdulahadAbduqahhorov/gin/Article/storage"
+	"github.com/jmoiron/sqlx"
 )
 
-func (stg Postgres) CreateAuthor(id string, author models.CreateAuthorModel) error {
+type authorRepo struct {
+	db *sqlx.DB
+}
+
+func NewAuthorRepo(db *sqlx.DB) storage.AuthorRepoI {
+	return authorRepo{
+		db: db,
+	}
+}
+func (stg authorRepo) CreateAuthor(id string, author models.CreateAuthorModel) error {
 
 	_, err := stg.db.Exec(`INSERT INTO 
 		author (
@@ -30,7 +41,7 @@ func (stg Postgres) CreateAuthor(id string, author models.CreateAuthorModel) err
 
 }
 
-func (stg Postgres) GetAuthor(limit, offset int, search string) ([]models.Author, error) {
+func (stg authorRepo) GetAuthor(limit, offset int, search string) ([]models.Author, error) {
 	var res []models.Author
 
 	rows, err := stg.db.Queryx(`SELECT 
@@ -75,7 +86,7 @@ func (stg Postgres) GetAuthor(limit, offset int, search string) ([]models.Author
 
 }
 
-func (stg Postgres) GetAuthorById(id string) (models.Author, error) {
+func (stg authorRepo) GetAuthorById(id string) (models.Author, error) {
 	var author models.Author
 
 	err := stg.db.QueryRow(`
@@ -101,7 +112,7 @@ func (stg Postgres) GetAuthorById(id string) (models.Author, error) {
 	return author, nil
 }
 
-func (stg Postgres) UpdateAuthor(author models.UpdateAuthorModel) error {
+func (stg authorRepo) UpdateAuthor(author models.UpdateAuthorModel) error {
 	res, err := stg.db.NamedExec(`
 	UPDATE  author SET 
 		firstname=:f, 
@@ -121,7 +132,7 @@ func (stg Postgres) UpdateAuthor(author models.UpdateAuthorModel) error {
 	return errors.New("author not found")
 }
 
-func (stg Postgres) DeleteAuthor(id string) error {
+func (stg authorRepo) DeleteAuthor(id string) error {
 
 	res, err := stg.db.Exec(`UPDATE author SET deleted_at=now() WHERE id=$1 AND deleted_at IS NULL`, id)
 	if err != nil {
