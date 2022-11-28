@@ -2,12 +2,10 @@
     "swagger": "2.0",
     "info": {
         "contact": {
-            "name": "API Article",
             "url": "http://example.com",
             "email": "example@swagger.io"
         },
         "license": {
-            "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         }
     },
@@ -588,13 +586,10 @@
                 "deleted_at": {
                     "type": "string"
                 },
-                "firstname": {
+                "fullname": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "lastname": {
                     "type": "string"
                 },
                 "updated_at": {
@@ -618,11 +613,11 @@
         },
         "models.CreateAuthorModel": {
             "type": "object",
+            "required": [
+                "fullname"
+            ],
             "properties": {
-                "firstname": {
-                    "type": "string"
-                },
-                "lastname": {
+                "fullname": {
                     "type": "string"
                 }
             }
@@ -686,14 +681,14 @@
         },
         "models.UpdateAuthorModel": {
             "type": "object",
+            "required": [
+                "fullname"
+            ],
             "properties": {
-                "firstname": {
+                "fullname": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "lastname": {
                     "type": "string"
                 }
             }

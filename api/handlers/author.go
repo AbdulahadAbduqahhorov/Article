@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
 
@@ -29,12 +28,6 @@ func (h Handler) CreateAuthor(c *gin.Context) {
 	if err := c.ShouldBindJSON(&author); err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
-		})
-		return
-	}
-	if author.FirstName == "" || author.LastName == "" {
-		c.JSON(422, models.JSONErrorResult{
-			Error: errors.New("validation error").Error(),
 		})
 		return
 	}

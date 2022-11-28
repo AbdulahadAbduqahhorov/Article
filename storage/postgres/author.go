@@ -22,17 +22,14 @@ func (stg authorRepo) CreateAuthor(id string, author models.CreateAuthorModel) e
 	_, err := stg.db.Exec(`INSERT INTO 
 		author (
 			id,
-			firstname,
-			lastname
+			fullname
 			) 
 		VALUES (
 			$1, 
-			$2,
-			$3
+			$2
 			)`,
 		id,
-		author.FirstName,
-		author.LastName,
+		author.FullName,
 	)
 	if err != nil {
 		return err
@@ -43,16 +40,16 @@ func (stg authorRepo) CreateAuthor(id string, author models.CreateAuthorModel) e
 
 func (stg authorRepo) GetAuthor(limit, offset int, search string) ([]models.Author, error) {
 	var res []models.Author
+	var tempFullname *string
 
 	rows, err := stg.db.Queryx(`SELECT 
 		id,
-		firstname,
-		lastname,
+		fullname,
 		created_at,
 		updated_at,
 		deleted_at 
 		FROM author
-		WHERE ((firstname ILIKE '%' || $1 || '%') or (lastname ILIKE '%' || $1 || '%') ) AND deleted_at IS NULL
+		WHERE (fullname ILIKE '%' || $1 || '%') AND deleted_at IS NULL
 		LIMIT $2
 		OFFSET $3
 	`,
@@ -68,8 +65,7 @@ func (stg authorRepo) GetAuthor(limit, offset int, search string) ([]models.Auth
 		var author models.Author
 		err := rows.Scan(
 			&author.Id,
-			&author.FirstName,
-			&author.LastName,
+			&tempFullname,
 			&author.CreatedAt,
 			&author.UpdatedAt,
 			&author.DeletedAt,
@@ -77,7 +73,9 @@ func (stg authorRepo) GetAuthor(limit, offset int, search string) ([]models.Auth
 		if err != nil {
 			return res, err
 		}
-
+		if tempFullname != nil {
+			author.FullName = *tempFullname
+		}
 		res = append(res, author)
 
 	}
@@ -88,20 +86,18 @@ func (stg authorRepo) GetAuthor(limit, offset int, search string) ([]models.Auth
 
 func (stg authorRepo) GetAuthorById(id string) (models.Author, error) {
 	var author models.Author
-
+	var tempFullname *string
 	err := stg.db.QueryRow(`
 	SELECT 
 		id,
-		firstname,
-		lastname,
+		fullname,
 		created_at,
 		updated_at,
 		deleted_at
 	FROM author  
 	WHERE id=$1 AND deleted_at is NULL`, id).Scan(
 		&author.Id,
-		&author.FirstName,
-		&author.LastName,
+		&tempFullname,
 		&author.CreatedAt,
 		&author.UpdatedAt,
 		&author.DeletedAt,
@@ -109,18 +105,20 @@ func (stg authorRepo) GetAuthorById(id string) (models.Author, error) {
 	if err != nil {
 		return author, err
 	}
+
+	if tempFullname != nil {
+		author.FullName = *tempFullname
+	}
 	return author, nil
 }
 
 func (stg authorRepo) UpdateAuthor(author models.UpdateAuthorModel) error {
 	res, err := stg.db.NamedExec(`
 	UPDATE  author SET 
-		firstname=:f, 
-		lastname=:l,
+		fullname=:f, 
 		updated_at=now() 
 		WHERE id=:i AND deleted_at IS NULL `, map[string]interface{}{
-		"f": author.FirstName,
-		"l": author.LastName,
+		"f": author.FullName,
 		"i": author.Id,
 	})
 	if err != nil {

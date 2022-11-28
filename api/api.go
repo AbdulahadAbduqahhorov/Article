@@ -10,10 +10,8 @@ import (
 	"github.com/AbdulahadAbduqahhorov/gin/Article/config"
 )
 
-// @contact.name  API Article
 // @contact.url   http://example.com
 // @contact.email example@swagger.io
-// @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 func SetUpApi(r *gin.Engine, h handlers.Handler, cfg config.Config) {
 	docs.SwaggerInfo.Title = "Swagger Example API"

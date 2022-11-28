@@ -20,11 +20,9 @@ definitions:
         type: string
       deleted_at:
         type: string
-      firstname:
+      fullname:
         type: string
       id:
-        type: string
-      lastname:
         type: string
       updated_at:
         type: string
@@ -40,10 +38,10 @@ definitions:
     type: object
   models.CreateAuthorModel:
     properties:
-      firstname:
+      fullname:
         type: string
-      lastname:
-        type: string
+    required:
+    - fullname
     type: object
   models.GetArticleByIdModel:
     properties:
@@ -84,20 +82,18 @@ definitions:
     type: object
   models.UpdateAuthorModel:
     properties:
-      firstname:
+      fullname:
         type: string
       id:
         type: string
-      lastname:
-        type: string
+    required:
+    - fullname
     type: object
 info:
   contact:
     email: example@swagger.io
-    name: API Article
     url: http://example.com
   license:
-    name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 paths:
   /v1/article:

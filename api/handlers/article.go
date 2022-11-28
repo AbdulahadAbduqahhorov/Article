@@ -31,6 +31,7 @@ func (h Handler) CreateArticle(c *gin.Context) {
 		return
 	}
 	id := uuid.New().String()
+	
 	err := h.Stg.Article().CreateArticle(id, article)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
@@ -85,7 +86,7 @@ func (h Handler) GetArticle(c *gin.Context) {
 		})
 		return
 	}
-	res,err := h.Stg.Article().GetArticle(limit, offset, search)
+	res, err := h.Stg.Article().GetArticle(limit, offset, search)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
@@ -110,7 +111,7 @@ func (h Handler) GetArticle(c *gin.Context) {
 // @Router      /v1/article/{id} [get]
 func (h Handler) GetArticleById(c *gin.Context) {
 	id := c.Param("id")
-	
+
 	res, err := h.Stg.Article().GetArticleById(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{

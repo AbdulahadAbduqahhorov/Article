@@ -11,12 +11,10 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "API Article",
             "url": "http://example.com",
             "email": "example@swagger.io"
         },
         "license": {
-            "name": "Apache 2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         },
         "version": "{{.Version}}"
@@ -600,13 +598,10 @@ const docTemplate = `{
                 "deleted_at": {
                     "type": "string"
                 },
-                "firstname": {
+                "fullname": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "lastname": {
                     "type": "string"
                 },
                 "updated_at": {
@@ -630,11 +625,11 @@ const docTemplate = `{
         },
         "models.CreateAuthorModel": {
             "type": "object",
+            "required": [
+                "fullname"
+            ],
             "properties": {
-                "firstname": {
-                    "type": "string"
-                },
-                "lastname": {
+                "fullname": {
                     "type": "string"
                 }
             }
@@ -698,14 +693,14 @@ const docTemplate = `{
         },
         "models.UpdateAuthorModel": {
             "type": "object",
+            "required": [
+                "fullname"
+            ],
             "properties": {
-                "firstname": {
+                "fullname": {
                     "type": "string"
                 },
                 "id": {
-                    "type": "string"
-                },
-                "lastname": {
                     "type": "string"
                 }
             }

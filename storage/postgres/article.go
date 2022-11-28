@@ -11,21 +11,19 @@ import (
 type articleRepo struct {
 	db *sqlx.DB
 }
-var author authorRepo
+
+
 
 func NewArticleRepo(db *sqlx.DB) storage.ArticleRepoI {
 	return articleRepo{
-		db:db,
+		db: db,
 	}
 }
 
 func (stg articleRepo) CreateArticle(id string, article models.CreateArticleModel) error {
 
-	_, err := author.GetAuthorById(article.AuthorId)
-	if err != nil {
-		return errors.New("author not found")
-	}
-	_, err = stg.db.Exec(`INSERT INTO article 
+	
+	_, err := stg.db.Exec(`INSERT INTO article 
 	(
 		id,
 		title,
@@ -98,7 +96,7 @@ func (stg articleRepo) GetArticle(limit, offset int, search string) ([]models.Ar
 
 func (stg articleRepo) GetArticleById(id string) (models.GetArticleByIdModel, error) {
 	var article models.GetArticleByIdModel
-
+	var tempFullname *string
 	err := stg.db.QueryRow(`
 	SELECT 
 		ar.id,
@@ -108,8 +106,7 @@ func (stg articleRepo) GetArticleById(id string) (models.GetArticleByIdModel, er
 		ar.updated_at,
 		ar.deleted_at,
 		au.id,
-		au.firstname,
-		au.lastname,
+		au.fullname,
 		au.created_at,
 		au.updated_at,
 		au.deleted_at
@@ -121,8 +118,7 @@ func (stg articleRepo) GetArticleById(id string) (models.GetArticleByIdModel, er
 		&article.UpdatedAt,
 		&article.DeletedAt,
 		&article.Author.Id,
-		&article.Author.FirstName,
-		&article.Author.LastName,
+		&article.Author.FullName,
 		&article.Author.CreatedAt,
 		&article.Author.UpdatedAt,
 		&article.Author.DeletedAt,
@@ -130,6 +126,11 @@ func (stg articleRepo) GetArticleById(id string) (models.GetArticleByIdModel, er
 	if err != nil {
 		return article, err
 	}
+
+	if tempFullname != nil {
+		article.Author.FullName = *tempFullname
+	}
+
 	return article, nil
 }
 
