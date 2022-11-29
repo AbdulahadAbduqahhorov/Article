@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/AbdulahadAbduqahhorov/gin/Article/models"
 	"github.com/gin-gonic/gin"
@@ -30,9 +30,16 @@ func (h Handler) CreateArticle(c *gin.Context) {
 		})
 		return
 	}
+	_, err := h.Stg.Author().GetAuthorById(article.AuthorId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
+			Error: errors.New("author not found").Error(),
+		})
+		return
+	}
 	id := uuid.New().String()
-	
-	err := h.Stg.Article().CreateArticle(id, article)
+
+	err = h.Stg.Article().CreateArticle(id, article)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
@@ -67,11 +74,9 @@ func (h Handler) CreateArticle(c *gin.Context) {
 // @Failure     400     {object} models.JSONErrorResult "Bad request"
 // @Router      /v1/article [get]
 func (h Handler) GetArticle(c *gin.Context) {
-	limitStr := c.DefaultQuery("limit", "10")
-	offsetStr := c.DefaultQuery("offset", "0")
 	search := c.Query("search")
 
-	limit, err := strconv.Atoi(limitStr)
+	limit, err := h.getLimitParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),
@@ -79,7 +84,7 @@ func (h Handler) GetArticle(c *gin.Context) {
 		return
 	}
 
-	offset, err := strconv.Atoi(offsetStr)
+	offset, err := h.getOffsetParam(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.JSONErrorResult{
 			Error: err.Error(),

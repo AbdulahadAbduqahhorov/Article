@@ -26,7 +26,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	h := handlers.NewHandler(stg)
+	h := handlers.NewHandler(stg,cfg)
 	switch cfg.Environment {
 	case "dev":
 		gin.SetMode(gin.DebugMode)
@@ -38,7 +38,9 @@ func main() {
 
 	router := gin.New()
 
-	router.Use(gin.Logger(), gin.Recovery())
+	if cfg.Environment != "production" {
+		router.Use(gin.Logger(), gin.Recovery()) 
+	}
 
 	api.SetUpApi(router, h, cfg)
 

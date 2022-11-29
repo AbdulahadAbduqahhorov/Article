@@ -14,9 +14,9 @@ import (
 // @contact.email example@swagger.io
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 func SetUpApi(r *gin.Engine, h handlers.Handler, cfg config.Config) {
-	docs.SwaggerInfo.Title = "Swagger Example API"
+	docs.SwaggerInfo.Title = cfg.App
 	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
-	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Version = cfg.Version
 
 	v1 := r.Group("v1")
 	{
